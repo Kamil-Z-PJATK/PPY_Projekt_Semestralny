@@ -3,21 +3,27 @@ import sys
 
 from States.Level import Level
 from States.Start import Start
+from States.UI import Menu
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 FPS=60
 
+
+
 class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption("YOKAI MONASTERY")
         self.clock = pygame.time.Clock()
         self.gameStateManager= GameStateManager("start")
         self.start=Start(self.screen, self.gameStateManager,SCREEN_WIDTH, SCREEN_HEIGHT)
         self.level=Level(self.screen, self.gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
-
-        self.states={"start":self.start,"level":self.level}
+        self.menu=Menu(self.screen,self.gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
+        self.init_fun=100
+        self.init_food = 100
+        self.states = {"start":self.start,"level":self.level, "menu":self.menu}
 
     def run(self):
         while True:
@@ -26,45 +32,17 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 self.states[self.gameStateManager.get_state()].handle_event(event)
-
+                if(self.gameStateManager.get_state()=="menu"):
+                    self.init_food= self.states[self.gameStateManager.get_state()].sliders[0].get_value()
+                    self.init_fun= self.states[self.gameStateManager.get_state()].sliders[1].get_value()
+                # print(self.init_food)
+                # print(self.init_fun)
             self.states[self.gameStateManager.get_state()].run()
 
             pygame.display.update()
             self.clock.tick(FPS)
 
 
-
-# class Level:
-#     def __init__(self,display,gameStateManager):
-#         self.display = display
-#         gameStateManager = gameStateManager
-#     def run(self):
-#         self.display.fill("blue")
-#
-#     def handle_event(self, event):
-#         pass
-
-# class Start:
-#     def __init__(self,display,gameStateManager):
-#         self.display = display
-#         gameStateManager = gameStateManager
-#         self.gameStateManager = gameStateManager
-#         self.button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 25, 200, 50)
-#         self.font = pygame.font.SysFont(None, 40)
-#     def run(self):
-#         self.display.fill("red")
-#         pygame.draw.rect(self.display, "white", self.button_rect)
-#         text_surface = self.font.render("Start Game", True, "black")
-#         text_rect = text_surface.get_rect(center=self.button_rect.center)
-#         self.display.blit(text_surface, text_rect)
-#
-#     def handle_event(self, event):
-#         if event.type == pygame.MOUSEBUTTONDOWN:
-#             if self.button_rect.collidepoint(event.pos):
-#                 self.gameStateManager.set_state("level")
-#
-#
-#
 
 
 class GameStateManager:

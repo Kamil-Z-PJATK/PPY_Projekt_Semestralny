@@ -9,3 +9,4 @@ class Level(State):
 
     def handle_event(self, event):
         pass
+
