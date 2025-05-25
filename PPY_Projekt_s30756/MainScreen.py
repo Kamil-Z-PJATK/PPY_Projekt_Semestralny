@@ -2,9 +2,12 @@
 import pygame
 
 from Player import Player
+from States.Level import Level
 
 from Yokai.Yokai import Yokai
 from Yokai.Yokai1 import Yokai1
+from Yokai.Yokai2 import Yokai2
+from main import GameStateManager
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -17,24 +20,49 @@ running = True
 
 
 
-# player=Player(100,100)
-# all_sprites.add(player)
-yokai = Yokai1()
+
+manager=GameStateManager("level")
+level = Level(screen,manager,1280,720)
+yokai = Yokai1(100,100, level)
+yokai2 = Yokai2(100,100, level)
 all_sprites.add(yokai)
+all_sprites.add(yokai2)
+
 while running:
+    level.run()
 
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT:
             running = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if yokai.rect.collidepoint(event.pos):
-                yokai.clicked()
+            for yok in all_sprites:
+                if yok.rect.collidepoint(event.pos):
+                    yok.clicked()
+
+        for sprite in all_sprites:
+            sprite.handle_event(event)
 
 
-    screen.blit(background, (0, 0))
+    all_sprites.update()
+    # screen.blit(background, (0, 0))
     all_sprites.draw(screen)
-    # RENDER YOUR GAME HERE
+    for sprite in all_sprites:
+        sprite.draw(screen)
+
+    pygame.display.update()
+
+
+class GameStateManager:
+    def __init__(self, currentState):
+        self.currentState = currentState
+
+    def get_state(self):
+        return self.currentState
+
+    def set_state(self, state):
+        self.currentState = state
 
 
 

@@ -4,6 +4,7 @@ import sys
 from States.Level import Level
 from States.Start import Start
 from States.UI import Menu
+from Yokai.Yokai1 import Yokai1
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -14,6 +15,7 @@ FPS=60
 class Game:
     def __init__(self):
         pygame.init()
+        self.all_sprites = pygame.sprite.Group()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("YOKAI MONASTERY")
         self.clock = pygame.time.Clock()
@@ -24,6 +26,9 @@ class Game:
         self.init_fun=100
         self.init_food = 100
         self.states = {"start":self.start,"level":self.level, "menu":self.menu}
+        self.yokai = Yokai1(100, 100, self.level)
+        self.all_sprites.add(self.yokai)
+
 
     def run(self):
         while True:
@@ -35,9 +40,18 @@ class Game:
                 if(self.gameStateManager.get_state()=="menu"):
                     self.init_food= self.states[self.gameStateManager.get_state()].sliders[0].get_value()
                     self.init_fun= self.states[self.gameStateManager.get_state()].sliders[1].get_value()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.yokai.rect.collidepoint(event.pos):
+                        self.yokai.clicked()
                 # print(self.init_food)
                 # print(self.init_fun)
             self.states[self.gameStateManager.get_state()].run()
+            if(self.gameStateManager.get_state()=="level"):
+                self.all_sprites.update()
+                # screen.blit(background, (0, 0))
+                self.all_sprites.draw(self.screen)
+                for sprite in self.all_sprites:
+                    sprite.draw(self.screen)
 
             pygame.display.update()
             self.clock.tick(FPS)
