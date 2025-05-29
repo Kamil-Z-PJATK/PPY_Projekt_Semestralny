@@ -44,5 +44,5 @@ class Button:
                 return True
 
     def update(self):
-        if not self.active and (time.time() - self.last_pressed_time) >= 5:
+        if not self.active and (time.time() - self.last_pressed_time) >= 4:
             self.active = True

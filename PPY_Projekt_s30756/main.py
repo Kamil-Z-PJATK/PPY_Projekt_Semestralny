@@ -2,6 +2,7 @@ import pygame
 import sys
 
 from States.Level import Level
+from States.MiniGame import MiniGame
 from States.Start import Start
 from States.UI import Menu
 from Yokai.Yokai1 import Yokai1
@@ -23,9 +24,10 @@ class Game:
         self.start=Start(self.screen, self.gameStateManager,SCREEN_WIDTH, SCREEN_HEIGHT)
         self.level=Level(self.screen, self.gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
         self.menu=Menu(self.screen,self.gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
+        self.minigame=MiniGame(self.screen,self.gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
         self.init_fun=100
         self.init_food = 100
-        self.states = {"start":self.start,"level":self.level, "menu":self.menu}
+        self.states = {"start":self.start,"level":self.level, "menu":self.menu, "minigame":self.minigame}
         self.yokai = Yokai1(100, 100, self.level)
         self.all_sprites.add(self.yokai)
 
@@ -43,9 +45,13 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.yokai.rect.collidepoint(event.pos):
                         self.yokai.clicked()
-                # print(self.init_food)
-                # print(self.init_fun)
+                for sprite in self.all_sprites:
+                   game= sprite.handle_event(event)
+
+                if (game=="minigame"):
+                    self.gameStateManager.set_state("minigame")
             self.states[self.gameStateManager.get_state()].run()
+
             if(self.gameStateManager.get_state()=="level"):
                 self.all_sprites.update()
                 # screen.blit(background, (0, 0))

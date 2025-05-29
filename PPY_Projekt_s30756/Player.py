@@ -5,7 +5,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()  # Initialize the Sprite superclass
 
         # Load an image for the sprite
-        self.image = pygame.image.load("Images/ball.jpg")
+        self.image = pygame.image.load("Images/ezgif.com-animated-gif-maker.gif")
 
         # Get the rect (for positioning and collision)
         self.rect = self.image.get_rect()

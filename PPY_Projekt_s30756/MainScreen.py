@@ -3,6 +3,8 @@ import pygame
 
 from Player import Player
 from States.Level import Level
+from States.MiniGame import MiniGame
+from States.TestState import SnakeGame
 
 from Yokai.Yokai import Yokai
 from Yokai.Yokai1 import Yokai1
@@ -21,28 +23,40 @@ running = True
 
 
 
-manager=GameStateManager("level")
+manager=GameStateManager("minigame")
+
 level = Level(screen,manager,1280,720)
-yokai = Yokai1(100,100, level)
+minigame=MiniGame(screen,manager,1280,720)
+
+yokai = Yokai1(5,100, level)
 yokai2 = Yokai2(100,100, level)
 all_sprites.add(yokai)
 all_sprites.add(yokai2)
+test=SnakeGame(screen,minigame,1280,720)
 
 while running:
     level.run()
-
+    # pom= minigame.run()
+    # if(pom==False):
+    #     running=False
+   #  test.run()
+   #  minigame.update()
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
             running = False
+        # minigame.handle_event(event)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             for yok in all_sprites:
                 if yok.rect.collidepoint(event.pos):
                     yok.clicked()
 
+
+
         for sprite in all_sprites:
             sprite.handle_event(event)
+
 
 
     all_sprites.update()
@@ -52,7 +66,7 @@ while running:
         sprite.draw(screen)
 
     pygame.display.update()
-
+    clock.tick(60)
 
 class GameStateManager:
     def __init__(self, currentState):
