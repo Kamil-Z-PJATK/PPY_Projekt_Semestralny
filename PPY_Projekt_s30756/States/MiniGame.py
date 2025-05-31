@@ -42,6 +42,8 @@ class MiniGame(State):
         self.draw()
         self.clock.tick(10)
         self.get_running()
+        return self.score
+
 
     def handle_event(self, event):
 
@@ -75,9 +77,15 @@ class MiniGame(State):
             self.reset_game()
             return
 
+        if(self.score ==1):
+            self.running = False
+            self.gameStateManager.set_state("level")
+            self.reset_game()
+            return
         if new_head in self.snake:
             self.running = False
             return
+
 
         self.snake.insert(0, new_head)
 
@@ -100,3 +108,6 @@ class MiniGame(State):
         self.display.blit(score_text, (10, 10))
 
         pygame.display.update()
+
+    def get_score(self):
+        return self.score

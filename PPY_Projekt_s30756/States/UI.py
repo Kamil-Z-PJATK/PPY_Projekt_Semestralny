@@ -103,7 +103,10 @@ class Menu(State):
             self.button_color = pygame.Color("white")
             self.text_color = pygame.Color("black")
             self.shadow_color = pygame.Color("black")
-
+    def return_value_food(self):
+        return int(self.food.__round__(0))
+    def return_value_fun(self):
+        return int(self.fun.__round__(0))
 
 
 class Slider:

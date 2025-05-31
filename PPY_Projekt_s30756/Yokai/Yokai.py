@@ -2,6 +2,7 @@ import pygame
 from pygame import surface
 
 from Button import Button
+from States.MiniGame import MiniGame
 
 
 class Yokai(pygame.sprite.Sprite):
@@ -86,7 +87,17 @@ class Yokai(pygame.sprite.Sprite):
                 self.hunger = self.init_hunger
             do_play=self.play_button.event_handeler(event,self.mouse)
             if(do_play):
-                self.fun += 10
                 return "minigame"
             if(self.fun >self.init_fun):
                 self.fun = self.init_fun
+
+    def set_fun(self, add):
+        self.fun += add
+        if (self.fun > self.init_fun):
+            self.fun = self.init_fun
+
+    def get_status(self):
+        return self.alive
+
+    def set_hunger(self, hunger):
+        self.hunger = hunger

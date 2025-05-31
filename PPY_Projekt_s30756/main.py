@@ -1,6 +1,7 @@
 import pygame
 import sys
 
+from States.EndScrean import EndScrean
 from States.Level import Level
 from States.MiniGame import MiniGame
 from States.Start import Start
@@ -25,12 +26,16 @@ class Game:
         self.level=Level(self.screen, self.gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
         self.menu=Menu(self.screen,self.gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
         self.minigame=MiniGame(self.screen,self.gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
+        self.end=EndScrean(self.screen,self.gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
         self.init_fun=100
         self.init_food = 100
-        self.states = {"start":self.start,"level":self.level, "menu":self.menu, "minigame":self.minigame}
-        self.yokai = Yokai1(100, 100, self.level)
-        self.all_sprites.add(self.yokai)
-
+        self.states = {"start":self.start,"level":self.level, "menu":self.menu, "minigame":self.minigame, "end":self.end}
+        # self.yokai = Yokai1(self.init_food, self.init_fun, self.level)
+        # self.all_sprites.add(self.yokai)
+        self.added=0
+        self.score=-1
+        self.gamer=None
+        self.ile=0
 
     def run(self):
         while True:
@@ -40,26 +45,66 @@ class Game:
                     sys.exit()
                 self.states[self.gameStateManager.get_state()].handle_event(event)
                 if(self.gameStateManager.get_state()=="menu"):
-                    self.init_food= self.states[self.gameStateManager.get_state()].sliders[0].get_value()
-                    self.init_fun= self.states[self.gameStateManager.get_state()].sliders[1].get_value()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.yokai.rect.collidepoint(event.pos):
-                        self.yokai.clicked()
-                for sprite in self.all_sprites:
-                   game= sprite.handle_event(event)
+                    self.init_food= self.states[self.gameStateManager.get_state()].return_value_food()
+                    self.init_fun= self.states[self.gameStateManager.get_state()].return_value_fun()
 
-                if (game=="minigame"):
-                    self.gameStateManager.set_state("minigame")
-            self.states[self.gameStateManager.get_state()].run()
+                for sprite in self.all_sprites:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+
+                        if sprite.rect.collidepoint(event.pos):
+                            sprite.clicked()
+                for sprite in self.all_sprites:
+                    game= sprite.handle_event(event)
+                    if (game == "minigame"):
+                        self.gameStateManager.set_state("minigame")
+                        self.gamer=sprite
+
+            if(self.gameStateManager.get_state()=="menu"):
+                for sprite in self.all_sprites:
+                    sprite.set_hunger(self.init_food)
+
+
+
+
+            score=self.states[self.gameStateManager.get_state()].run()
+
+            if(self.gameStateManager.get_state()=="minigame"):
+                if(score!= None):
+                    self.score=score
+
+            if(self.gameStateManager.get_state()!="minigame" and self.score!=None and self.score!=-1):
+                print(self.score)
+                self.gamer.set_fun(10+self.score)
+                self.score=-1
+
 
             if(self.gameStateManager.get_state()=="level"):
                 self.all_sprites.update()
-                # screen.blit(background, (0, 0))
+
                 self.all_sprites.draw(self.screen)
+
+                if self.added==0:
+                    yokai = Yokai1(3, self.init_fun, self.level)
+                    self.all_sprites.add(yokai)
+                    self.added+=1
+
                 for sprite in self.all_sprites:
                     sprite.draw(self.screen)
 
+
             pygame.display.update()
+
+            if len(self.all_sprites)>0:
+                for sprite in self.all_sprites:
+                    print(sprite.get_status())
+                    if sprite.get_status()==False:
+                        self.ile += 1
+
+
+                if self.ile >= len(self.all_sprites):
+                    self.gameStateManager.set_state("end")
+
+
             self.clock.tick(FPS)
 
 
