@@ -2,6 +2,7 @@
 import pygame
 
 from Player import Player
+from States.EndScrean import EndScrean
 from States.Level import Level
 from States.MiniGame import MiniGame
 from States.TestState import SnakeGame
@@ -27,20 +28,23 @@ manager=GameStateManager("minigame")
 
 level = Level(screen,manager,1280,720)
 minigame=MiniGame(screen,manager,1280,720)
-
+end=EndScrean(screen,manager,1280,720)
 yokai = Yokai1(5,100, level)
-yokai2 = Yokai2(100,100, level)
+
+#yokai2 = Yokai2(100,100, level)
 all_sprites.add(yokai)
-all_sprites.add(yokai2)
+#all_sprites.add(yokai2)
 test=SnakeGame(screen,minigame,1280,720)
 
 while running:
-    level.run()
+
+    # level.run()
     # pom= minigame.run()
     # if(pom==False):
     #     running=False
    #  test.run()
    #  minigame.update()
+    end.run()
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:

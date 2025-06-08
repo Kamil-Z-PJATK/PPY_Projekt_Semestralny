@@ -1,6 +1,7 @@
 import pygame
 from pygame import display
 
+from Button import Button
 from States.State import State
 
 
@@ -32,14 +33,11 @@ class Menu(State):
         self.count_centre=(self.sliders[0].slider_right+10, self.sliders[0].slider_top+5)
         self.count_centre2=(self.sliders[1].slider_right+10, self.sliders[1].slider_top+5)
 
-        self.button_color = pygame.Color("white")
-        self.text_color = pygame.Color("black")
-        self.shadow_color = pygame.Color("black")
-        self.button_rect = pygame.Rect(self.SCREEN_WIDTH // 2 - 100, self.SCREEN_HEIGHT // 2 +175, 200, 50)
-        self.button_shadow_rect=pygame.Rect(self.SCREEN_WIDTH // 2 - 95, self.SCREEN_HEIGHT // 2 +180, 200, 50)
 
-        self.mouse_pos=pygame.mouse.get_pos()
-        self.mouse=pygame.mouse.get_pressed()
+        self.button_shadow_rect=pygame.Rect(self.SCREEN_WIDTH // 2 - 95, self.SCREEN_HEIGHT // 2 +180, 200, 50)
+        self.button=Button(self.SCREEN_WIDTH // 2 - 100, self.SCREEN_HEIGHT // 2 +175, 200, 50, "PLAY")
+        self.mouse_pos = pygame.mouse.get_pos()
+        self.mouse = pygame.mouse.get_pressed()
         self.food=100
         self.fun=100
         self.image=pygame.image.load("Images/Monastery_inside.xcf")
@@ -78,12 +76,8 @@ class Menu(State):
         self.food=self.sliders[0].get_value()
         self.fun=self.sliders[1].get_value()
 
-        button_font = pygame.font.Font("Fonts\Midorima-PersonalUse-Regular.ttf", 30)
-        pygame.draw.rect(self.display, self.shadow_color, self.button_shadow_rect)
-        pygame.draw.rect(self.display, self.button_color, self.button_rect)
-        text_surface = button_font.render("GO", True, self.text_color)
-        text_rect = text_surface.get_rect(center=self.button_rect.center)
-        self.display.blit(text_surface, text_rect)
+        self.button.update()
+        self.button.draw(self.display)
         pygame.display.flip()
 
 
@@ -91,18 +85,13 @@ class Menu(State):
 
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.button_rect.collidepoint(event.pos):
-                super().fade(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
-                self.gameStateManager.set_state("level")
-        if self.button_rect.collidepoint(self.mouse_pos):
-            self.button_color = pygame.Color("black")
-            self.text_color = pygame.Color("white")
-            self.shadow_color = pygame.Color("white")
-        else:
-            self.button_color = pygame.Color("white")
-            self.text_color = pygame.Color("black")
-            self.shadow_color = pygame.Color("black")
+
+        res=self.button.event_handeler(event,self.mouse_pos)
+
+        if(res==True):
+            super().fade(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
+            self.gameStateManager.set_state("level")
+
     def return_value_food(self):
         return int(self.food.__round__(0))
     def return_value_fun(self):

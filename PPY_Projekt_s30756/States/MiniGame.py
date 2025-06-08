@@ -19,6 +19,7 @@ class MiniGame(State):
         self.food = self.place_food()
         self.score = 0
         self.font = pygame.font.SysFont(None, 36)
+        self.image = pygame.image.load("Images/Courtyard.png")
 
     def reset_game(self):
         self.running = True
@@ -77,7 +78,7 @@ class MiniGame(State):
             self.reset_game()
             return
 
-        if(self.score ==1):
+        if(self.score ==10):
             self.running = False
             self.gameStateManager.set_state("level")
             self.reset_game()
@@ -96,13 +97,16 @@ class MiniGame(State):
             self.snake.pop()
 
     def draw(self):
-        self.display.fill((0, 0, 0))
+        self.display.blit(self.image, (0,0))
         for segment in self.snake:
-            pygame.draw.rect(self.display, (0, 255, 0),
+            pygame.draw.rect(self.display, "black",
                              pygame.Rect(segment[0], segment[1], self.cell_size, self.cell_size))
-        pygame.draw.rect(self.display, (255, 0, 0),
+            pygame.draw.rect(self.display, "pink",
+                             pygame.Rect(segment[0], segment[1], self.cell_size-3, self.cell_size-3))
+        pygame.draw.rect(self.display, "white",
                          pygame.Rect(self.food[0], self.food[1], self.cell_size, self.cell_size))
-
+        pygame.draw.rect(self.display, "red",
+                         pygame.Rect(self.food[0]+3, self.food[1]+3, self.cell_size-6, self.cell_size-6))
 
         score_text = self.font.render(f"Score: {self.score}", True, (255, 255, 255))
         self.display.blit(score_text, (10, 10))

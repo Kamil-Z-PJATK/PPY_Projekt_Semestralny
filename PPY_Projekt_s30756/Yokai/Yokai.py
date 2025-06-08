@@ -1,3 +1,5 @@
+from shutil import which
+
 import pygame
 from pygame import surface
 
@@ -13,7 +15,9 @@ class Yokai(pygame.sprite.Sprite):
         super().__init__()
         self.name = name
         self.imageList = imageList
-        self.image = pygame.image.load(self.imageList[0]).convert_alpha()
+        original_image = pygame.image.load(self.imageList[0]).convert_alpha()
+        self.scaled_size = (original_image.get_width()*3 , original_image.get_height()*3 )
+        self.image = pygame.transform.scale(original_image, self.scaled_size)
         self.init_hunger=hunger
         self.init_fun=fun
         self.hunger = hunger
@@ -23,7 +27,6 @@ class Yokai(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.last_update = pygame.time.get_ticks()
         self.font = pygame.font.Font("Fonts\Midorima-PersonalUse-Regular.ttf", 30)
-        self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.show_stats=False;
         self.level = level
@@ -33,12 +36,23 @@ class Yokai(pygame.sprite.Sprite):
         self.play_button=Button(self.button_pos[0]+5,self.button_pos[1]-55,100,50,"PLAY")
         self.mouse=pygame.mouse.get_pos()
         self.alive= True
+        self.image_index = 0
+        self.frame_delay = 200
+        self.last_frame_update = pygame.time.get_ticks()
+
+
 
 
 
 
     def update(self):
         current_time = pygame.time.get_ticks()
+
+        if current_time - self.last_frame_update >= self.frame_delay:
+            self.image_index = (self.image_index + 1) % len(self.imageList)
+            new_image = pygame.image.load(self.imageList[self.image_index]).convert_alpha()
+            self.image = pygame.transform.scale(new_image, self.scaled_size)
+            self.last_frame_update = current_time
 
         if current_time - self.last_update >=1000:
             if self.alive:
@@ -50,6 +64,10 @@ class Yokai(pygame.sprite.Sprite):
                 self.fun=0
         if self.hunger <= 0 or self.fun <= 0:
             self.alive = False
+
+
+
+
         self.feed_button.update()
         self.play_button.update()
 

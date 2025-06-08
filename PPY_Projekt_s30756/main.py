@@ -7,6 +7,9 @@ from States.MiniGame import MiniGame
 from States.Start import Start
 from States.UI import Menu
 from Yokai.Yokai1 import Yokai1
+from Yokai.Yokai2 import Yokai2
+from Yokai.Yokai3 import Yokai3
+from Yokai.Yokai4 import Yokai4
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -30,15 +33,17 @@ class Game:
         self.init_fun=100
         self.init_food = 100
         self.states = {"start":self.start,"level":self.level, "menu":self.menu, "minigame":self.minigame, "end":self.end}
-        # self.yokai = Yokai1(self.init_food, self.init_fun, self.level)
-        # self.all_sprites.add(self.yokai)
+
         self.added=0
         self.score=-1
         self.gamer=None
         self.ile=0
+        
 
     def run(self):
+
         while True:
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -73,7 +78,7 @@ class Game:
                     self.score=score
 
             if(self.gameStateManager.get_state()!="minigame" and self.score!=None and self.score!=-1):
-                print(self.score)
+                #print(self.score)
                 self.gamer.set_fun(10+self.score)
                 self.score=-1
 
@@ -84,8 +89,14 @@ class Game:
                 self.all_sprites.draw(self.screen)
 
                 if self.added==0:
-                    yokai = Yokai1(3, self.init_fun, self.level)
-                    self.all_sprites.add(yokai)
+                    yokai_1 = Yokai1(self.init_food, self.init_fun, self.level)
+                    yokai_2 = Yokai2(self.init_food, self.init_fun, self.level)
+                    yokai_3= Yokai3(self.init_food, self.init_fun, self.level)
+                    yokai_4= Yokai4(self.init_food, self.init_fun, self.level)
+                    self.all_sprites.add(yokai_1)
+                    self.all_sprites.add(yokai_2)
+                    self.all_sprites.add(yokai_3)
+                    self.all_sprites.add(yokai_4)
                     self.added+=1
 
                 for sprite in self.all_sprites:
@@ -96,7 +107,7 @@ class Game:
 
             if len(self.all_sprites)>0:
                 for sprite in self.all_sprites:
-                    print(sprite.get_status())
+                    #print(sprite.get_status())
                     if sprite.get_status()==False:
                         self.ile += 1
 
