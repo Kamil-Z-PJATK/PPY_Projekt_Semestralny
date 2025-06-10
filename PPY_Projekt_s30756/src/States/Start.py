@@ -1,21 +1,37 @@
 import pygame
 
-from Button import Button
-from States.State import State
+from src.Button import Button
+from src.States.State import State
 
 
 class Start(State):
     def __init__(self,display,gameStateManager, SCREEN_WIDTH,SCREEN_HEIGHT):
+        """
+
+        Inicjalizuje ekran startowy gry z tłem, tytułem i przyciskiem START GAME.
+
+        Args:
+            display: powierzchnia Pygame do rysowania.
+            gameStateManager: obiekt zarządzający stanami gry.
+            SCREEN_WIDTH: szerokość ekranu.
+            SCREEN_HEIGHT: wysokość ekranu.
+
+        """
         super().__init__(display,gameStateManager, SCREEN_WIDTH,SCREEN_HEIGHT )
 
         self.button=Button(self.SCREEN_WIDTH // 2 - 95, self.SCREEN_HEIGHT // 2 - 5, 200, 50,"START GAME")
-        self.font = pygame.font.Font("Fonts\Midorima-PersonalUse-Regular.ttf", 100)
+        self.font = pygame.font.Font("Fonts/Midorima-PersonalUse-Regular.ttf", 100)
 
         self.mouse=pygame.mouse.get_pos()
 
         self.image = pygame.image.load("Images/Monastery_outside.png")
 
     def run(self):
+        """
+
+        Renderuje ekran startowy: tło, tytuł gry oraz przycisk START GAME.
+        Obsługuje również aktualizację pozycji myszy i przycisku.
+        """
 
         self.mouse = pygame.mouse.get_pos()
         self.display.blit(self.image, (0,0))
@@ -47,6 +63,12 @@ class Start(State):
 
 
     def handle_event(self, event):
+        """
+        Obsługuje zdarzenia wejściowe, np. kliknięcie przycisku START GAME.
+
+        Args:
+            event: (pygame.event.Event)obiekt zdarzenia Pygame.
+        """
 
         res=self.button.event_handeler(event,self.mouse)
         if res:

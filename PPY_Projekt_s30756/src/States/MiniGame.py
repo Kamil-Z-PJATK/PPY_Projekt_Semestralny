@@ -1,12 +1,21 @@
 import random
-from datetime import time
 
-
-from States.State import State
+from src.States.State import State
 import pygame
 
 class MiniGame(State):
     def __init__(self,display,gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT):
+        """
+
+        Inicjalizuje mini-grę typu Snake.
+
+        Args:
+            display: (pygame.display)powierzchnia Pygame do rysowania.
+            gameStateManager: obiekt zarządzający stanami gry.
+            SCREEN_WIDTH: szerokość ekranu.
+            SCREEN_HEIGHT: wysokość ekranu.
+
+        """
         self.display = display
         self.gameStateManager = gameStateManager
         self.SCREEN_WIDTH = SCREEN_WIDTH
@@ -22,6 +31,9 @@ class MiniGame(State):
         self.image = pygame.image.load("Images/Courtyard.png")
 
     def reset_game(self):
+        """
+        Resetuje stan gry do wartości początkowych.
+        """
         self.running = True
         self.direction = pygame.K_RIGHT
         self.snake = [(100, 100), (80, 100), (60, 100)]
@@ -29,6 +41,14 @@ class MiniGame(State):
         self.score = 0
 
     def place_food(self):
+        """
+
+        Losuje nowe położenie jedzenia, upewniając się, że nie koliduje z ciałem węża.
+
+        Returns:
+            Tuple (x, y) z pozycją jedzenia.
+
+        """
         while True:
             x = random.randint(0, (self.SCREEN_WIDTH - self.cell_size) // self.cell_size) * self.cell_size
             y = random.randint(0, (self.SCREEN_HEIGHT - self.cell_size) // self.cell_size) * self.cell_size
@@ -36,6 +56,13 @@ class MiniGame(State):
                 return (x, y)
 
     def run(self):
+        """
+        Główna pętla gry. Aktualizuje stan gry, rysuje elementy i kontroluje tempo.
+
+        Returns:
+            False, jeśli gra się zakończyła.
+            Wynik (score), jeśli gra trwa.
+        """
 
         if(self.running == False):
             return False
@@ -47,6 +74,14 @@ class MiniGame(State):
 
 
     def handle_event(self, event):
+        """
+
+        Obsługuje zdarzenia klawiatury do zmiany kierunku ruchu węża.
+
+        Args:
+            event: (pygame.event.Event)obiekt zdarzenia Pygame.
+
+        """
 
         if event.type == pygame.KEYDOWN:
             if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]:
@@ -57,9 +92,15 @@ class MiniGame(State):
                     self.direction = event.key
 
     def get_running(self):
+        """
+        Zwraca informację, czy gra nadal trwa.
+        """
         return self.running
 
     def update(self):
+        """
+        Aktualizuje pozycję węża, sprawdza kolizje, zjada jedzenie i aktualizuje wynik.
+        """
         head_x, head_y = self.snake[0]
         if self.direction == pygame.K_UP:
             head_y -= self.cell_size
@@ -97,6 +138,9 @@ class MiniGame(State):
             self.snake.pop()
 
     def draw(self):
+        """
+        Rysuje tło, węża, jedzenie i wynik na ekranie.
+        """
         self.display.blit(self.image, (0,0))
         for segment in self.snake:
             pygame.draw.rect(self.display, "black",
@@ -114,4 +158,7 @@ class MiniGame(State):
         pygame.display.update()
 
     def get_score(self):
+        """
+        Zwraca aktualny wynik gracza.
+        """
         return self.score

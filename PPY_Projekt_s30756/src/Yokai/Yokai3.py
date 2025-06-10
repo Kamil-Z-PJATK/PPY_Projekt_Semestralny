@@ -1,9 +1,18 @@
-from Yokai.Yokai import Yokai
+from src.Yokai.Yokai import Yokai
 
 
 class Yokai3(Yokai):
 
     def __init__(self, hunger, fun, level ):
+        """
+        Inicjalizuje obiekt Yokai3 z konkretnymi wartościami głodu, zabawy, pozycji i animacji.
+
+        Args:
+            hunger: Bazowy poziom głodu.
+            fun: Bazowy poziom zabawy.
+            level: Aktualny poziom gry.
+
+        """
         imageList =["Images/Yamabushi/Idle_1.png","Images/Yamabushi/Idle_3.png","Images/Yamabushi/Idle_4.png","Images/Yamabushi/Idle_5.png"]
         self.hunger = hunger*0.75
         self.fun = (float)(fun*0.75)

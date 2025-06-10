@@ -1,10 +1,6 @@
-from shutil import which
-
 import pygame
-from pygame import surface
 
 from Button import Button
-from States.MiniGame import MiniGame
 
 
 class Yokai(pygame.sprite.Sprite):
@@ -12,6 +8,20 @@ class Yokai(pygame.sprite.Sprite):
     hunger =100
     fun=100
     def __init__(self, name, imageList, hunger, fun, hunger_per_second,fun_per_second, x, y, level):
+        """
+        Inicjalizuje obiekt Yokai.
+
+        Args:
+         name: Nazwa ducha.
+         imageList: Lista ścieżek do grafik przedstawiających animacje.
+         hunger: Początkowy poziom głodu.
+         fun: Początkowy poziom zabawy.
+         hunger_per_second: Tempo spadku głodu.
+         fun_per_second: Tempo spadku zabawy.
+         x: Pozycja X.
+         y: Pozycja Y.
+         level: Obiekt reprezentujący poziom (stan gry).
+        """
         super().__init__()
         self.name = name
         self.imageList = imageList
@@ -26,7 +36,7 @@ class Yokai(pygame.sprite.Sprite):
         self.fun_per_tick = fun_per_second
         self.rect = self.image.get_rect()
         self.last_update = pygame.time.get_ticks()
-        self.font = pygame.font.Font("Fonts\Midorima-PersonalUse-Regular.ttf", 30)
+        self.font = pygame.font.Font("Fonts/Midorima-PersonalUse-Regular.ttf", 30)
         self.rect.topleft = (x, y)
         self.show_stats=False;
         self.level = level
@@ -46,6 +56,9 @@ class Yokai(pygame.sprite.Sprite):
 
 
     def update(self):
+        """
+        Aktualizuje animację Yokai oraz spadek statystyk co sekundę.
+        """
         current_time = pygame.time.get_ticks()
 
         if current_time - self.last_frame_update >= self.frame_delay:
@@ -74,6 +87,13 @@ class Yokai(pygame.sprite.Sprite):
 
 
     def draw(self, screen):
+        """
+        Rysuje Yokai na ekranie wraz z dodatkowymi informacjami, jeśli aktywne.
+
+        Args:
+        screen: (pygame.display)Obiekt ekranu Pygame na którym rysowany jest Yokai.
+
+        """
         self.mouse = pygame.mouse.get_pos()
         if self.show_stats:
             hunger_text = self.font.render(f"Hunger: {self.hunger}", True, "black")
@@ -91,12 +111,24 @@ class Yokai(pygame.sprite.Sprite):
 
 
     def clicked(self):
+        """
+        Obsługuje kliknięcie na Yokai — przełącza widoczność statystyk.
+        """
         self.show_stats=not self.show_stats
 
 
 
 
     def handle_event(self, event):
+        """
+         Obsługuje interakcje użytkownika z przyciskami Yokai.
+
+        Args:
+        event: (pygame.event.Event)Obiekt zdarzenia Pygame.
+
+        Returns:
+        "minigame" jeśli rozpoczęto minigrę, w przeciwnym razie None.
+        """
         if self.alive:
             do_feed=self.feed_button.event_handeler(event,self.mouse)
             if(do_feed):
@@ -110,12 +142,31 @@ class Yokai(pygame.sprite.Sprite):
                 self.fun = self.init_fun
 
     def set_fun(self, add):
+        """
+        Dodaje wartość do zabawy Yokai.
+
+        Args:
+        add: Ilość punktów do dodania.
+
+        """
         self.fun += add
         if (self.fun > self.init_fun):
             self.fun = self.init_fun
 
     def get_status(self):
+        """
+        Zwraca, czy Yokai jest żywy.
+
+        :return: True jeśli żywy, False jeśli martwy.
+
+        """
         return self.alive
 
     def set_hunger(self, hunger):
+        """
+        Ustawia nowy poziom głodu.
+
+        Args:
+        hunger: Nowa wartość głodu.
+        """
         self.hunger = hunger

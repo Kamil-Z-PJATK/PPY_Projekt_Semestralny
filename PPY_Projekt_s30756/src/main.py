@@ -1,15 +1,15 @@
 import pygame
 import sys
 
-from States.EndScrean import EndScrean
-from States.Level import Level
-from States.MiniGame import MiniGame
-from States.Start import Start
-from States.UI import Menu
-from Yokai.Yokai1 import Yokai1
-from Yokai.Yokai2 import Yokai2
-from Yokai.Yokai3 import Yokai3
-from Yokai.Yokai4 import Yokai4
+from src.States.EndScrean import EndScrean
+from src.States.Level import Level
+from src.States.MiniGame import MiniGame
+from src.States.Start import Start
+from src.States.UI import Menu
+from src.Yokai.Yokai1 import Yokai1
+from src.Yokai.Yokai2 import Yokai2
+from src.Yokai.Yokai3 import Yokai3
+from src.Yokai.Yokai4 import Yokai4
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -19,6 +19,19 @@ FPS=60
 
 class Game:
     def __init__(self):
+
+        """
+        Inicjalizuje główne komponenty gry YOKAI MONASTERY.
+
+        Tworzy ekran gry, zegar, grupę sprite'ów, menedżer stanów gry oraz instancje różnych ekranów/stadiów gry:
+        - ekran startowy
+        - główny poziom gry
+        - menu
+        - minigra
+        - ekran końcowy
+
+        Dodatkowo ustawia podstawowe statystyki gracza i zmienne pomocnicze.
+        """
         pygame.init()
         self.all_sprites = pygame.sprite.Group()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -41,7 +54,15 @@ class Game:
         
 
     def run(self):
+        """
 
+        Główna pętla gry. Obsługuje:
+        - zdarzenia użytkownika (np.  zamknięcie okna),
+        - logikę stanu gry i jego przełączanie,
+        - interakcję sprite'ów z użytkownikiem,
+        - aktualizację i rysowanie sprite'ów,
+        - przejście do stanu końcowego gry, jeśli wszystkie postacie znikną.
+        """
         while True:
 
             for event in pygame.event.get():
@@ -78,7 +99,6 @@ class Game:
                     self.score=score
 
             if(self.gameStateManager.get_state()!="minigame" and self.score!=None and self.score!=-1):
-                #print(self.score)
                 self.gamer.set_fun(10+self.score)
                 self.score=-1
 
@@ -115,6 +135,7 @@ class Game:
                 if self.ile >= len(self.all_sprites):
                     self.gameStateManager.set_state("end")
 
+            self.ile = 0
 
             self.clock.tick(FPS)
 
@@ -122,12 +143,37 @@ class Game:
 
 
 class GameStateManager:
+    """
+    Zarządza aktualnym stanem gry (np. start, menu, level, minigame, end screan).
+
+    Umożliwia pobieranie i ustawianie aktywnego stanu.
+    """
     def __init__(self, currentState):
+        """
+
+        Inicjalizuje menedżer stanu gry z podanym stanem początkowym.
+
+        Args:
+            currentState: (str) nazwa sceny do zapamiętania
+        """
         self.currentState = currentState
 
     def get_state(self):
+        """
+        Zwraca aktualny stan gry.
+
+        Returns:
+            (str) Aktualny stan gry.
+
+        """
         return self.currentState
     def set_state(self,state):
+        """
+        Ustawia nowy stan gry.
+
+        Args:
+         state: (str) Nowy stan gry do ustawienia.
+        """
         self.currentState = state
 
 

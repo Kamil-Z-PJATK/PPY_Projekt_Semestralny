@@ -1,14 +1,24 @@
 import pygame
-from pygame import display
 
-from Button import Button
-from States.State import State
+from src.Button import Button
+from src.States.State import State
 
 
 class Menu(State):
     def __init__(self,display,gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT, bg="gray"):
+        """
+        Inicjalizuje ekran menu z suwakami i przyciskiem.
+
+        Args:
+            display: (pygame.display)powierzchnia Pygame do rysowania.
+            gameStateManager: obiekt zarządzający stanami gry.
+            SCREEN_WIDTH: szerokość ekranu.
+            SCREEN_HEIGHT: wysokość ekranu.
+            bg: kolor tła (domyślnie szary).
+
+        """
         super().__init__(display,gameStateManager,SCREEN_WIDTH,SCREEN_HEIGHT)
-        self.font=pygame.font.Font("Fonts\Midorima-PersonalUse-Regular.ttf", 40)
+        self.font=pygame.font.Font("Fonts/Midorima-PersonalUse-Regular.ttf", 40)
         self.display = display
         self.bg = bg
         self.center1 = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2-50)
@@ -26,7 +36,7 @@ class Menu(State):
         self.text_surface2= self.font.render("INITIAL FUN", True, "white")
         self.text_shadow2=self.font.render("INITIAL FUN", True, "black")
 
-        self.options_font=pygame.font.Font("Fonts\Midorima-PersonalUse-Regular.ttf", 100)
+        self.options_font=pygame.font.Font("Fonts/Midorima-PersonalUse-Regular.ttf", 100)
         self.name_text = self.options_font.render("OPTIONS", True, "white")
         self.name_shadow = self.options_font.render("OPTIONS", True, "black")
 
@@ -44,6 +54,13 @@ class Menu(State):
 
 
     def run(self):
+        """
+
+        Główna pętla renderująca ekran menu.
+        Obsługuje rysowanie tła, tekstów, suwaków, przycisku oraz aktualizację wartości.
+
+        :return:
+        """
         self.mouse_pos = pygame.mouse.get_pos()
         self.mouse=pygame.mouse.get_pressed()
 
@@ -85,6 +102,12 @@ class Menu(State):
 
 
     def handle_event(self, event):
+        """
+        Obsługuje zdarzenia wejściowe, np. kliknięcie przycisku PLAY.
+
+        Args:
+            event:(pygame.event.Event) obiekt zdarzenia Pygame
+        """
 
         res=self.button.event_handeler(event,self.mouse_pos)
 
@@ -93,13 +116,30 @@ class Menu(State):
             self.gameStateManager.set_state("level")
 
     def return_value_food(self):
+        """
+        Zwraca zaokrągloną wartość początkowego poziomu głodu ustawioną przez użytkownika.
+        """
         return int(self.food.__round__(0))
     def return_value_fun(self):
+        """
+        Zwraca zaokrągloną wartość początkowego poziomu zabawy ustawioną przez użytkownika
+        """
         return int(self.fun.__round__(0))
 
 
 class Slider:
     def __init__(self, pos:tuple, size:tuple, innit_value:float, min:int, max:int):
+        """
+
+        Inicjalizuje suwak do ustawiania wartości.
+
+        Args:
+            pos: pozycja środka suwaka (x, y).
+            size: rozmiar suwaka (szerokość, wysokość).
+            innit_value: początkowa wartość w zakresie.
+            min: minimalna wartość suwaka.
+            max: maksymalna wartość suwaka.
+        """
         self.pos = pos
         self.size = size
 
@@ -117,12 +157,36 @@ class Slider:
         self.button=pygame.Rect(self.slider_left+self.innit_value-5,self.slider_top,10,self.size[1])
 
     def move_slider(self, mouse_pos):
+        """
+
+        Przesuwa przycisk suwaka do pozycji myszy.
+
+        Args:
+            mouse_pos: aktualna pozycja myszy (x, y).
+
+        """
         self.button.centerx=mouse_pos[0]
     def render(self,display):
+        """
+
+        Rysuje suwak na ekranie.
+
+        Args:
+            display: (pygame.display)powierzchnia Pygame do rysowania
+
+        """
         pygame.draw.rect(display,"black",self.shadow)
         pygame.draw.rect(display, "lightgray",self.container)
         pygame.draw.rect(display, "red",self.button)
     def get_value(self):
+        """
+
+        Oblicza i zwraca aktualną wartość suwaka na podstawie pozycji przycisku.
+
+        Returns:
+            wartość liczbową w zakresie od min do max.
+
+        """
         range=self.slider_right-self.slider_left -1
         button_value=self.button.centerx - self.slider_left
         return (button_value/range)*(self.max-self.min)+self.min
